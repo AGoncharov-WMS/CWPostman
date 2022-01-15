@@ -1,0 +1,1462 @@
+{
+	"info": {
+		"_postman_id": "bac072c5-d667-45d1-9d8b-2793638a57c9",
+		"name": "Coursework",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Позитив 1 - Негатив 1 (запуск коллекции)",
+			"item": [
+				{
+					"name": "Авторизация admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Авторизация успешна (код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/login?username=Admin&password=Admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "Admin"
+								},
+								{
+									"key": "password",
+									"value": "Admin"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "001.001 - Создание user с полными валидными полями",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"/* т.к. серверов БД несколько, 5 раз создаю пользователя */\r",
+									"\r",
+									"if (!pm.environment.get(\"iCount\")) {\r",
+									"    pm.environment.set(\"iCount\", 0);\r",
+									"}\r",
+									"\r",
+									"if (pm.environment.get(\"iCount\") < 4) {\r",
+									"    pm.environment.set(\"iCount\", parseInt(pm.environment.get(\"iCount\"), 10) + 1);\r",
+									"    \r",
+									"    setTimeout(function() {}, 3000);\r",
+									"    postman.setNextRequest(request.name);\r",
+									" } else {\r",
+									"    jsonData = pm.response.json();\r",
+									"    var req = JSON.parse(request.data);\r",
+									"    pm.test(\"Пользователь создан. В message записан наш ID\", function () {\r",
+									"        pm.expect(jsonData.message).is.eql(\"\" + req.id)\r",
+									"    });\r",
+									"\r",
+									"    pm.environment.unset(\"iCount\");\r",
+									" }\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "002.001 - Повторное создание user с полными валидными полями",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ожидаю сообщение <пользователь уже существует> (ожидаемый код != 200)\", function () {\r",
+									"\r",
+									"    pm.response.to.not.have.status(200);\r",
+									"\r",
+									"    //if (pm.response.code == 200) {\r",
+									"      //  throw new Error(\"Поступил код 200\")\r",
+									"    //}\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta2\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Проверка наличия пользователя по имени",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Проверка создания пользователя (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "001.002 - Удаление пользователя по имени",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (!pm.environment.get(\"iCount\")) {\r",
+									"    pm.environment.set(\"iCount\", 0);\r",
+									"}\r",
+									"\r",
+									"if (pm.environment.get(\"iCount\") < 4) {\r",
+									"    \r",
+									"    if (pm.environment.get(\"iCount\") == 0) {\r",
+									"        jsonData = pm.response.json();\r",
+									"\r",
+									"        pm.test(\"Пользователь удалён. В message записан наш username\", function () {\r",
+									"            pm.expect(jsonData.message).is.eql(\"Antuanetta\");\r",
+									"        });\r",
+									"    }\r",
+									"\r",
+									"    pm.environment.set(\"iCount\", parseInt(pm.environment.get(\"iCount\"), 10) + 1);\r",
+									"\r",
+									"    setTimeout(function() {}, 3000);\r",
+									"    postman.setNextRequest(request.name);\r",
+									" } else {\r",
+									"    pm.environment.unset(\"iCount\");\r",
+									" }\r",
+									"\r",
+									"    \r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "002.002 - Удаление пользователя по имени после удаления",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"    pm.test(\"Пользователь не найден (статус код 404)\", function () {\r",
+									"        pm.response.to.have.status(404);\r",
+									"    });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Проверка наличия пользователя после удаления",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Проверка наличия пользователя после удаления (статус код 404)\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "001.003 - Выход из системы",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Выход из системы (поле message = 'ok')\", function () {\r",
+									"    jsonData = pm.response.json();\r",
+									"    console.log(jsonData.message);\r",
+									"    pm.expect(jsonData.message).is.eql(\"ok\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Негатив 2",
+			"item": [
+				{
+					"name": "003.001 - Создание user с полными валидными полями",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Ожидаю сообщение, что вход не выполнен (статус код != 200)\", function () {\r",
+									"    pm.response.to.not.have.status(200);\r",
+									"    \r",
+									"    //if (pm.response.code == 200) {\r",
+									"        //throw new Error(\"Поступил код 200\")\r",
+									"    //}\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "003.002 - Удаление пользователя по имени",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"    pm.test(\"Ожидаю, что пользователь не найден (код != 200)\", function () {\r",
+									"        pm.response.to.not.have.status(200);\r",
+									"        \r",
+									"        //if (pm.response.code == 200) {\r",
+									"            //throw new Error(\"Поступил код 200\")\r",
+									"        //}\r",
+									"    });\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "003.003 - Выход из системы без входа",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ожидаю сообщение, что вход не выполнен (код != 200)\", function () {\r",
+									"    pm.response.to.not.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Позитив 2",
+			"item": [
+				{
+					"name": "004.002 - MAX ID (Int64)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Создание пользователя c ID = MAX INT64 (status = 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 9223372036854775807,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.004 - Нулевой ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Создания пользователя c ID = 0 (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.007.1 - Неполный набор данных (все кроме id)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан без поля id (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.007.2 - Неполный набор данных (все кроме firstname)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан без firstname (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.007.3 - Неполный набор данных (все кроме lastname)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан без lastname (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.007.4 - Неполный набор данных (все кроме email)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан без email (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.007.5 - Неполный набор данных (все кроме password)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан без password (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.007.6 - Неполный набор данных (все кроме phone)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан без phone (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.007.7 - Неполный набор данных (все кроме userStatus)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан без userStatus (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.008 - Неполный набор данных (только username)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Antuanetta\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.013 - Длинное имя пользователя (300 символов)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Создание пользователя с длинным именем (код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"cmOrOlqfYLnZvrrHNOq2vabKBO6f2jSL39V92YUky7JXsU61WoHN8wMQmbOUBrTzAivZqeHFGaS1gj4clwXpTwHBRN8amY0wRPFQmjy10bVevxusRZfOOi9aRlBbcVt1hTXqoZKVuJFBOVz9GdFIVnhmp8C9SW3zGe7Eqysq8ZBbQlQt8fu0L3RyMpSk7N2yDb4IH0t53iwOnuJRmCf53vKDzYFsnHOcn9y1VypHb2FF4HB4Ne8A2GFrRh45Wf1QgC8rhei7EnDalVKukosQFAheLPI5IodOFMWZSBQfI2ID\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+79068335422\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.013.1 - Удаление пользователя c длинным именем",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"    pm.test(\"Пользователь со спец сиволом в имени удалён (статус код 200)\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/cmOrOlqfYLnZvrrHNOq2vabKBO6f2jSL39V92YUky7JXsU61WoHN8wMQmbOUBrTzAivZqeHFGaS1gj4clwXpTwHBRN8amY0wRPFQmjy10bVevxusRZfOOi9aRlBbcVt1hTXqoZKVuJFBOVz9GdFIVnhmp8C9SW3zGe7Eqysq8ZBbQlQt8fu0L3RyMpSk7N2yDb4IH0t53iwOnuJRmCf53vKDzYFsnHOcn9y1VypHb2FF4HB4Ne8A2GFrRh45Wf1QgC8rhei7EnDalVKukosQFAheLPI5IodOFMWZSBQfI2ID",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cmOrOlqfYLnZvrrHNOq2vabKBO6f2jSL39V92YUky7JXsU61WoHN8wMQmbOUBrTzAivZqeHFGaS1gj4clwXpTwHBRN8amY0wRPFQmjy10bVevxusRZfOOi9aRlBbcVt1hTXqoZKVuJFBOVz9GdFIVnhmp8C9SW3zGe7Eqysq8ZBbQlQt8fu0L3RyMpSk7N2yDb4IH0t53iwOnuJRmCf53vKDzYFsnHOcn9y1VypHb2FF4HB4Ne8A2GFrRh45Wf1QgC8rhei7EnDalVKukosQFAheLPI5IodOFMWZSBQfI2ID"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.014 - Русские символы в полях",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Русские символы в полях (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Антуанетта\",\r\n  \"lastName\": \"Иогана\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.015 - Русские буквы в имени",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Русские символы в имени (статус код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Антуанетта\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.015.1 - Удаление пользователя по имени с русскими буквами",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"    pm.test(\"Пользователь со спец сиволом в имени удалён (статус код 200)\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Антуанетта",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Антуанетта"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление пользователя по имени",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"    pm.test(\"Пользователь удалён (статус код 200)\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Негатив 3",
+			"item": [
+				{
+					"name": "004.001 - Символьное поле ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ошибка создания пользователя c символьным ID (статус код 500)\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"777999a\",\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.003 - Отрицательный ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ожидаю ошибку создания пользователя с отрицательным ID (статус код 500)\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": -10,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.005 - Переполнение ID (Int64)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ошибка создания пользователя id > max Int64 (статус код 500)\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 9223372036854775808,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.006 - Пустой ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ошибка создания пользователя пустой id (статус код 400)\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": ,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.007 - Неполный набор данных (все кроме username)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ожидаю ошибку создания пользователя без поля username (статус код 500)\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.009 - Имя пользователя с сиволомами",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Пользователь создан (код 200)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta!@#$%^&*()\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.009.1 - Удаление пользователя по имени с символами Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"    pm.test(\"Пользователь удалён (статус код 200)\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta!@#$%^&*()",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta!@"
+							],
+							"hash": "$%^&*()"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.010 - Имя пользователя со спец сиволом",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ожидаю ошибку создания пользователя со спец символом в имени (статус код 500)\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\\t!\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+7-906-332-33-33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.010.1 - Удаление пользователя по имени со спец сиволом",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"    pm.test(\"Пользователь со спец сиволом в имени удалён (статус код 200)\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta\\t!",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta",
+								"t!"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.011 - В поле телефон сиволы",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ошибка создания пользователя с символами в номере телефона (статус код 500)\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"ввн jrk33\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "004.012 - С лишним полем (id2)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ошибка создания пользователя. Лишнее поле (статус код 500)\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 777999,\r\n  \"id2\": 777999,\r\n  \"username\": \"Antuanetta\",\r\n  \"firstName\": \"Antuanetta\",\r\n  \"lastName\": \"Ioganna\",\r\n  \"email\": \"ok@ok.ru\",\r\n  \"password\": \"123456\",\r\n  \"phone\": \"+79068335422\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление пользователя по имени",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"    pm.test(\"Пользователь удалён (статус код 200)\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Antuanetta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Antuanetta"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://petstore.swagger.io/v2/user"
+		}
+	]
+}
