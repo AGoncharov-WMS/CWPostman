@@ -1,2 +1,7 @@
 # CWPostman
-работа Postman
+Работа с Postman в школе QA
+
+Задача: 
+  протестировать методы GET (logout), POST (/user), DELETE 
+  сервиса https://petstore.swagger.io/#
+  раздела User
